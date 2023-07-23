@@ -1,72 +1,20 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/hashicorp/vault/api"
-
-	_ "github.com/lib/pq"
 )
 
-const functionName = "gamify-participant"
-
-// Payload captures the basic payload we're sending for demonstration
-// Ex: {"payload": "hello"}
-type Payload struct {
-	Message string `json:"payload"`
-}
-
-// String prints the payload recieved
-func (m Payload) String() string {
-	return m.Message
-}
-
-// HandleRequest reads credentials from /tmp and uses them to query the database
-// for users. The database is determined by the DATABASE_URL environment
-// variable, and the username and password are retrieved from the secret.
-func HandleRequest(ctx context.Context, payload Payload) error {
-	logger := log.New(os.Stderr, fmt.Sprintf("[%s] ", functionName), 0)
-	logger.Println("Received:", payload.String())
-	logger.Println("Reading file /tmp/vault_secret.json")
-	secretRaw, err := ioutil.ReadFile("/tmp/vault_secret.json")
-	if err != nil {
-		return fmt.Errorf("error reading file: %w", err)
+func handler(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	response := events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Body:       "\"Hello from Gamify!\"",
 	}
-
-	// read token
-	// tokenRaw, err := ioutil.ReadFile("/tmp/vault/token")
-	// if err != nil {
-	// 	return fmt.Errorf("error reading file: %w", err)
-	// }
-
-	dbURL := os.Getenv("DATABASE_URL")
-	if dbURL == "" {
-		return errors.New("no DATABASE_URL, exiting")
-	}
-
-	// First decode the JSON into a map[string]interface{}
-	var secret api.Secret
-	b := bytes.NewBuffer(secretRaw)
-	dec := json.NewDecoder(b)
-	// While decoding JSON values, interpret the integer values as `json.Number`s
-	// instead of `float64`.
-	dec.UseNumber()
-
-	if err := dec.Decode(&secret); err != nil {
-		return err
-	}
-
-	return nil
+	return response, nil
 }
 
 func main() {
-	lambda.Start(HandleRequest)
+	lambda.Start(handler)
 }
