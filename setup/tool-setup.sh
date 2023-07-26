@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ARCH=$(uname -m)
+
 # Install HashiCorp tools (Terraform and Vault)
 sudo apt-get update
 sudo apt-get install -y gnupg software-properties-common ca-certificates
@@ -13,8 +15,26 @@ sudo apt update
 sudo apt-get install -y terraform=1.5.3-1 vault=1.14.0-1
 
 # Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+if [ $ARCH = "arm64" ]; then
+    curl --silent https://awscli.amazonaws.com/awscli-exe-linux-arm64.zip \
+        --output awscliv2.zip
+else
+    curl --silent https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
+        --output awscliv2.zip
+fi
 unzip awscliv2.zip
 sudo ./aws/install
 
 rm -rf awscliv2.zip aws
+
+# Install Vault Lambda Extension
+if [ $ARCH = "arm64" ]; then
+    curl --silent https://releases.hashicorp.com/vault-lambda-extension/0.10.1/vault-lambda-extension_0.10.1_linux_arm64.zip \
+        --output vault-lambda-extension.zip
+else
+    curl --silent https://releases.hashicorp.com/vault-lambda-extension/0.10.1/vault-lambda-extension_0.10.1_linux_amd64.zip \
+        --output vault-lambda-extension.zip
+fi
+
+unzip vault-lambda-extension.zip -d ./
+rm -rf vault-lambda-extension.zip
