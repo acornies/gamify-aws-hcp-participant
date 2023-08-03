@@ -3,10 +3,10 @@ WORKDIR /app
 # Copy dependencies list
 COPY ./app .
 # Build with optional lambda.norpc tag
-RUN CGO_ENABLED=0 go build -tags lambda.norpc -o main main.go
+RUN CGO_ENABLED=0 go build -tags lambda.norpc -o main .
 # Copy artifacts to a clean image
 ARG BUILDARCH
-FROM public.ecr.aws/lambda/provided:al2-$BUILDARCH
+FROM public.ecr.aws/lambda/provided:al2-x86_64
 COPY --from=build /app/main ./main
 COPY extensions/vault-lambda-extension /opt/extensions/vault-lambda-extension
 ENTRYPOINT [ "./main" ]

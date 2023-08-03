@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,9 +12,15 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/hashicorp/vault/api"
+
+	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
 func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
+
+	fmt.Println("Started processing event, secrets injected")
 
 	// Check for required env vars env vars
 	secretFile := os.Getenv("VAULT_SECRET_FILE_DB")
@@ -53,12 +58,14 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 
 	// Connect to the database and insert the registration
 	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", secret.Data["username"], secret.Data["password"], dbURL, dbName)
-	_, err = sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Successfully connected to the database")
+	fmt.Println("Successfully connected to the database")
+
+	defer db.Close()
 
 	// We don't need to do anything with the DB connection
 	// The exercise is securing the connection with Vault
@@ -68,13 +75,13 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 		fmt.Printf("The message %s for event source %s = %s \n", message.MessageId, message.EventSource, message.Body)
 
 		// Unmarshal the JSON into a GameEvent struct
-		var event GameEvent
-		if err := json.Unmarshal([]byte(message.Body), &event); err != nil {
-			return err
-		}
+		// var event GameEvent
+		// if err := json.Unmarshal([]byte(message.Body), &event); err != nil {
+		// 	return err
+		// }
 
 		// if the participants have made it this far, they get x points
-		fmt.Printf("Send payload to leaderboard: %s", event.LeaderboardAddress)
+		// fmt.Printf("Send payload to leaderboard: %s", event.LeaderboardAddress)
 		// TODO finish the function
 	}
 
