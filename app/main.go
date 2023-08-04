@@ -8,9 +8,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/hashicorp/vault/api"
 
 	"database/sql"
@@ -48,8 +53,6 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	var secret api.Secret
 	b := bytes.NewBuffer(secretRaw)
 	dec := json.NewDecoder(b)
-	// While decoding JSON values, interpret the integer values as `json.Number`s
-	// instead of `float64`.
 	dec.UseNumber()
 
 	if err := dec.Decode(&secret); err != nil {
@@ -68,21 +71,41 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	defer db.Close()
 
 	// We don't need to do anything with the DB connection
-	// The exercise is securing the connection with Vault
+	// The exercise is about securing the connection with Vault
 	// move on to determining points at this stage
 
 	for _, message := range sqsEvent.Records {
-		fmt.Printf("The message %s for event source %s = %s \n", message.MessageId, message.EventSource, message.Body)
-
 		// Unmarshal the JSON into a GameEvent struct
-		// var event GameEvent
-		// if err := json.Unmarshal([]byte(message.Body), &event); err != nil {
-		// 	return err
-		// }
+		var event GameEvent
+		if err := json.Unmarshal([]byte(message.Body), &event); err != nil {
+			return err
+		}
 
-		// if the participants have made it this far, they get x points
-		// fmt.Printf("Send payload to leaderboard: %s", event.LeaderboardAddress)
-		// TODO finish the function
+		// if the participants have made it this far, they get 1 point for every message
+		lc, _ := lambdacontext.FromContext(ctx)
+		arn := lc.InvokedFunctionArn
+		var lbEvent LeaderboardEvent = LeaderboardEvent{
+			FunctionARN:  arn,
+			FunctionName: lambdacontext.FunctionName,
+			AccountID:    strings.Split(arn, ":")[4],
+			Points:       1,
+		}
+
+		// Marshal the LeaderboardEvent struct into JSON
+		lbEventJSON, err := json.Marshal(lbEvent)
+		if err != nil {
+			return err
+		}
+
+		// Publish the LeaderboardEvent to the SNS topic
+		mySession := session.Must(session.NewSession())
+		svc := sqs.New(mySession)
+		body := string(lbEventJSON)
+		_, err = svc.SendMessage(&sqs.SendMessageInput{
+			DelaySeconds: aws.Int64(0),
+			MessageBody:  &body,
+			QueueUrl:     &event.LeaderboardQueue,
+		})
 	}
 
 	return nil

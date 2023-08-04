@@ -57,17 +57,17 @@ terraform init
 
 ## The Challenge
 
-Using Docker and Terraform, build and deploy an AWS Lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. Once your function starts receiving and processing messages from the queue, your team will start to receive points for very message processed. The team with the highest amount of points wins the challenge. Additional points will be awarded for:
+Build and deploy an AWS Lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. Once your function starts receiving and processing messages from the queue, your team will start to receive points for very message processed. The team with the highest amount of points wins the challenge. Additional points will be awarded for:
 
 - Did you use Terraform deploy it?
 - Did you use your Terraform Cloud workspace?
 - Terraform coding style - Show your work!
-- TBD
 
 ## Suggested Steps
 
-1. 📝 Launch a Github Codespace from this repository
-2. ☁️ Add your AWS credentials to your Terraform Cloud workspace variables
+1. 📝 Launch a Github Codespace from this repository, run `./setup/tool-setup.sh`
+   1. Hook up your Terraform code/workspace to Terraform Cloud (team token provided)
+2. ☁️ Add AWS credentials to your Terraform Cloud workspace variables
 3. 🐳 Build and tag the Docker container using the supplied Dockerfile
 4. 📙 Create an ECR repository for the image in AWS
    1. Push the Docker container to the ECR repository
@@ -78,7 +78,7 @@ Using Docker and Terraform, build and deploy an AWS Lambda function that receive
 7. 📄 Configure the Lambda with the image url from the ECR repository
    1. Provide further config needed for the Vault Lambda Extension
 8. 📬 Map the SQS event source to your Lambda
-9. 🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
+9.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
    1. The AWS auth method is needed
    2. An AWS auth role is also needed for the Lambda
    3. Think about a suitable Vault policy to assign to the role
