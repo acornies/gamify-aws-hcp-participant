@@ -79,11 +79,11 @@ Build and deploy an AWS Lambda function that receives messages from a specified 
    1. Provide further config needed for the Vault Lambda Extension
 8. 📬 Map the SQS event source to your Lambda
 9.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
-   1. The AWS auth method is needed
-   2. An AWS auth role is also needed for the Lambda
-   3. Think about a suitable Vault policy to assign to the role
-   4. A database secrets engine of type Postgres is needed
-   5. A database engine role is also needed to vend Postgres accounts
+    1. The AWS auth method is needed
+    2. An AWS auth role is also needed for the Lambda
+    3. Think about a suitable Vault policy to assign to the role
+    4. A database secrets engine of type Postgres is needed
+    5. A database engine role is also needed to vend Postgres accounts
 10. 🎉 Test your Lambda function!
 
 Don't forget to commit and push your code the repository!
