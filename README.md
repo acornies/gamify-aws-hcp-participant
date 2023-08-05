@@ -7,6 +7,12 @@ The participant repository for gamify challenges.
 ./setup/tool-setup.sh
 ```
 
+This installs Terraform, Vault and the AWS CLI. It also builds the needed Docker container needed for the challenge. Verify you have a Docker image tagged with `gamify:latest` using:
+
+```
+docker image list
+```
+
 ## AWS Account Access
 
 Refer to your facilitator's AWS Workshop Studio event link.
@@ -66,25 +72,24 @@ Build and deploy an AWS Lambda function that receives messages from a specified 
 ## Suggested Steps
 
 1. 📝 Launch a Github Codespace from this repository, run `./setup/tool-setup.sh`
-   1. Hook up your Terraform code/workspace to Terraform Cloud (team token provided)
+   1. Hook up your Terraform code/workspace to Terraform Cloud (instructions above)
 2. ☁️ Add AWS credentials to your Terraform Cloud workspace variables
-3. 🐳 Build and tag the Docker container using the supplied Dockerfile
-4. 📙 Create an ECR repository for the image in AWS
+3. 🐳 Create an ECR repository for the Docker image in AWS
    1. Push the Docker container to the ECR repository
-5. 🐘 Create a RDS Postgres database instance
+4. 🐘 Create a RDS Postgres database instance
    1. Think about a security group for the RDS instance
-6. 🚀 Create a Lambda function with package type "image"
+5. 🚀 Create a Lambda function with package type "image"
    1. Think about an IAM policy and role needed for the Vault integration
-7. 📄 Configure the Lambda with the image url from the ECR repository
+6. 📄 Configure the Lambda with the image url from the ECR repository
    1. Provide further config needed for the Vault Lambda Extension
-8. 📬 Map the SQS event source to your Lambda
-9.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
+7. 📬 Map the SQS event source to your Lambda
+8.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
     1. The AWS auth method is needed
     2. An AWS auth role is also needed for the Lambda
     3. Think about a suitable Vault policy to assign to the role
     4. A database secrets engine of type Postgres is needed
     5. A database engine role is also needed to vend Postgres accounts
-10. 🎉 Test your Lambda function!
+9.  🎉 Test your Lambda function!
 
 Don't forget to commit and push your code the repository!
 
