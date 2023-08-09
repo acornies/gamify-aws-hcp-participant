@@ -38,11 +38,6 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 		return errors.New("no DATABASE_ADDR environment variable, exiting")
 	}
 
-	dbName := os.Getenv("DATABASE_NAME")
-	if dbName == "" {
-		return errors.New("no DATABASE_NAME environment variable, exiting")
-	}
-
 	// Read the secret from the file before processing the event
 	secretRaw, err := ioutil.ReadFile(secretFile)
 	if err != nil {
@@ -60,7 +55,7 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	}
 
 	// Connect to the database and insert the registration
-	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", secret.Data["username"], secret.Data["password"], dbURL, dbName)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s?sslmode=disable", secret.Data["username"], secret.Data["password"], dbURL)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
