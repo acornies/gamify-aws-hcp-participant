@@ -61,13 +61,37 @@ Assuming you're successfully authenticated, initialize the repository with:
 terraform init
 ```
 
+## The App (Lambda function)
+
+The app in this repository is already written, so it just needs to be deployed as a container image. The Lambda Vault Extension needs these environment variables to run:
+
+| Environment variable      | Value |
+| ----------- | ----------- |
+| VAULT_ADDR      | https://your-event-hcp-vault-cluster.z1.hashicorp.cloud:8200       |
+| VAULT_NAMESPACE   | admin/your-namespace        |
+| VAULT_AUTH_ROLE   | your-aws-auth-role        |
+| VAULT_AUTH_PROVIDER   | aws        |
+| VAULT_SECRET_PATH_DB   | database/creds/your-db-role        |
+| VAULT_SECRET_FILE_DB   | /tmp/vault_secret.json        |
+
+The app needs these environment variables to run:
+
+| Environment variable      | Value |
+| ----------- | ----------- |
+| VAULT_SECRET_FILE_DB   | /tmp/vault_secret.json        |
+| DATABASE_ADDR   | your-rds-address.us-east-2.rds.amazonaws.com:5432/dbname        |
+
 ## The Challenge
 
-Build and deploy an AWS Lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. Once your function starts receiving and processing messages from the queue, your team will start to receive points for very message processed. The team with the highest amount of points wins the challenge. Additional points will be awarded for:
+Build and deploy the lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. Once your function starts receiving and processing messages from the queue (facilitator provided), your team will receive points for very message processed. Your team will also receive points for the types of AWS resources that are living in your AWS account.
+
+Additional points will be awarded for:
 
 - Did you use Terraform deploy it?
 - Did you use your Terraform Cloud workspace?
 - Terraform coding style - Show your work!
+
+The team with the highest amount of points wins the challenge.
 
 ## Suggested Steps
 
@@ -81,7 +105,7 @@ Build and deploy an AWS Lambda function that receives messages from a specified 
 5. 🚀 Create a Lambda function with package type "image"
    1. Think about an IAM policy and role needed for the Vault integration
 6. 📄 Configure the Lambda with the image url from the ECR repository
-   1. Provide further config needed for the Vault Lambda Extension
+   1. Provide the [config](#the-app-lambda-function) needed for the app to run
 7. 📬 Map the SQS event source to your Lambda
 8.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
     1. The AWS auth method is needed
