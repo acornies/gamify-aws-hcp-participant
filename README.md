@@ -1,7 +1,9 @@
 # gamify-aws-hcp-participant
-The participant repository for gamify challenges.
+This is a template repository designed to be used by participants of an AWS HCP Gamify challenge.
 
-## Setup Codespace
+## Getting Started 
+
+Click the "Use this template" button to create a new team repository under the appropriate org. Once this is done, launch a GitHub Codespace using the <> Code button to start the challenge with the new repository.
 
 ```shell
 ./setup/tool-setup.sh
