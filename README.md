@@ -63,6 +63,10 @@ Assuming you're successfully authenticated, initialize the repository with:
 terraform init
 ```
 
+## The Architecture
+
+![gameday_participant](https://github.com/acornies/gamify-aws-hcp-participant/assets/2882297/fb6646d7-9042-4031-8474-a9d5a4b580c6)
+
 ## The App (Lambda function)
 
 The app in this repository is already written, so it just needs to be deployed as a container image. The Lambda Vault Extension needs these environment variables to run:
