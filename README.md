@@ -69,7 +69,7 @@ terraform init
 
 ## The App (Lambda function)
 
-The app in this repository is already written, so it just needs to be deployed as a container image. The Lambda Vault Extension needs these environment variables to run:
+The app in this repository is already written, so it just needs to be deployed as a container image. The Vault Lambda Extension needs these environment variables to run:
 
 | Environment variable      | Value |
 | ----------- | ----------- |
@@ -89,37 +89,37 @@ The app needs these environment variables to run:
 
 ## The Challenge
 
-Build and deploy the lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. Once your function starts receiving and processing messages from the queue (facilitator provided), your team will receive points for very message processed. Your team will also receive points for the types of AWS resources that are living in your AWS account.
+Build and deploy the lambda function that receives messages from a specified SQS queue. The function is built to use the Vault Lambda Extension to secure the Postgres database connection using a dynamic database credential. 
 
-Additional points will be awarded for:
+### Scoring
 
-- Did you use Terraform deploy it?
-- Did you use your Terraform Cloud workspace?
-- Terraform coding style - Show your work!
+Once your function starts receiving and processing messages from the queue, your team will receive points for very message processed. Your team will also receive points for the types of AWS resources that are living in your AWS account.
 
-The team with the highest amount of points wins the challenge.
+Additional points may be awarded for Terraform style and the use of Terraform Cloud.
+
+The team with the highest amount of points wins the challenge. 🏆
 
 ## Suggested Steps
 
 1. 📝 Launch a Github Codespace from this repository, run `./setup/tool-setup.sh`
    1. Hook up your Terraform code/workspace to Terraform Cloud (instructions above)
-2. ☁️ Add AWS credentials to your Terraform Cloud workspace variables
-3. 🐳 Create an ECR repository for the Docker image in AWS
-   1. Push the Docker container to the ECR repository
-4. 🐘 Create a RDS Postgres database instance
+   2. Add AWS and Vault credentials to your Terraform Cloud workspace variables
+2. 🐳 Create an ECR repository for the Docker image in AWS
+   1. Push the `gamify:latest` Docker container to the ECR repository
+3. 🐘 Create a RDS Postgres database instance
    1. Think about a security group for the RDS instance
-5. 🚀 Create a Lambda function with package type "image"
+4. 🚀 Create a Lambda function with package type "image"
    1. Think about an IAM policy and role needed for the Vault integration
-6. 📄 Configure the Lambda with the image url from the ECR repository
+5. 📄 Configure the Lambda with the image url from the ECR repository
    1. Provide the [config](#the-app-lambda-function) needed for the app to run
-7. 📬 Map the SQS event source to your Lambda
-8.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
+6. 📬 Map the SQS event source to your Lambda (Queue ARN provided)
+7.  🔒 Configure your Vault namespace for the Lambda to fetch a dynamic database credential
     1. The AWS auth method is needed
     2. An AWS auth role is also needed for the Lambda
     3. Think about a suitable Vault policy to assign to the role
     4. A database secrets engine of type Postgres is needed
     5. A database engine role is also needed to vend Postgres accounts
-9.  🎉 Test your Lambda function!
+8.  🎉 Test your Lambda function!
 
 Don't forget to commit and push your code the repository!
 
@@ -130,5 +130,7 @@ In order debug your function code, add the `AWSLambdaBasicExecutionRole` managed
 ## References to help
 
 - [The AWS Terraform provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- [The Vault Terraform provider](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
+- [Vault AWS auth](https://developer.hashicorp.com/vault/tutorials/cloud-ops/vault-auth-method-aws)
 - [Introduction to the Vault AWS Lambda extension](https://developer.hashicorp.com/vault/tutorials/app-integration/intro-vault-aws-lambda-extension)
 - [Learn Vault Lambda Extension Github](https://github.com/hashicorp-education/learn-vault-lambda-extension)
