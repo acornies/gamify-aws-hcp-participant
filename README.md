@@ -27,7 +27,7 @@ export VAULT_ADDR=<hcp-vault-endpoint-here>
 export VAULT_NAMESPACE=admin/<your-namespace-here>
 ```
 
-Login to your HCP Vault namespace using a [GitHub personal access token](https://github.com/settings/tokens):
+Login to your HCP Vault namespace using a [GitHub personal access token](https://github.com/settings/tokens) (verify it has the `read:org` scope):
 ```shell
 vault login -method github
 ```
