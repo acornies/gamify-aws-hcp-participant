@@ -55,7 +55,7 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 	}
 
 	// Connect to the database and insert the registration
-	connStr := fmt.Sprintf("postgres://%s:%s@%s?sslmode=disable", secret.Data["username"], secret.Data["password"], dbURL)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s", secret.Data["username"], secret.Data["password"], dbURL)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
@@ -76,14 +76,14 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) error {
 			return err
 		}
 
-		// if the participants have made it this far, they get 1 point for every message
+		// if the participants have made it this far, they get points for every message
 		lc, _ := lambdacontext.FromContext(ctx)
 		arn := lc.InvokedFunctionArn
 		var lbEvent LeaderboardEvent = LeaderboardEvent{
 			FunctionARN:  arn,
 			FunctionName: lambdacontext.FunctionName,
 			AccountID:    strings.Split(arn, ":")[4],
-			Points:       1,
+			Points:       100, // TODO move to central record function
 		}
 
 		// Marshal the LeaderboardEvent struct into JSON
